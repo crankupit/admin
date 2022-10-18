@@ -1,0 +1,24 @@
+{
+    "name": "crankupit/admin",
+    "description": "This package provides the admin authentication for the laravel app.",
+    "type": "laravel-package",
+    "require": {
+        "laravel/laravel": "9.x-dev"
+    },
+    "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "CrankUpIT\\Admin\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sahil Chraya",
+            "email": "sahil@crankupit.com"
+        }
+    ],
+    "license": "MIT",
+    "minimum-stability": "dev"
+}

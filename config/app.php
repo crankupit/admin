@@ -185,7 +185,7 @@ return [
         /*
          * Package Service Providers...
          */
-
+        CrankUpIT\Admin\AdminServicePorvider::class,
         /*
          * Application Service Providers...
          */
