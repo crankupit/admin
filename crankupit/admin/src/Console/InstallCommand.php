@@ -2,7 +2,9 @@
 
 namespace CrankUpIT\Admin\Console;
 
+use RuntimeException;
 use Illuminate\Console\Command;
+use Symfony\Component\Process\Process;
 
 class InstallCommand extends Command
 {
@@ -26,6 +28,8 @@ class InstallCommand extends Command
         copy(__DIR__ . '/../../stubs/Models/Admin.php', app_path('Models/Admin.php'));
 
         $this->replaceInFile('// \App\Models\User::factory(10)->create();', '\App\Models\Admin::factory()->create();', base_path('database/seeders/DatabaseSeeder.php'));
+
+        $this->runCommands(['php artisan migrate --seed']);
     }
 
     /**
@@ -39,5 +43,28 @@ class InstallCommand extends Command
     protected function replaceInFile($search, $replace, $path)
     {
         file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
+    }
+
+    /**
+     * Run the given commands.
+     *
+     * @param  array  $commands
+     * @return void
+     */
+    protected function runCommands($commands)
+    {
+        $process = Process::fromShellCommandline(implode(' && ', $commands), null, null, null, null);
+
+        if ('\\' !== DIRECTORY_SEPARATOR && file_exists('/dev/tty') && is_readable('/dev/tty')) {
+            try {
+                $process->setTty(true);
+            } catch (RuntimeException $e) {
+                $this->output->writeln('  <bg=yellow;fg=black> WARN </> ' . $e->getMessage() . PHP_EOL);
+            }
+        }
+
+        $process->run(function ($type, $line) {
+            $this->output->write('    ' . $line);
+        });
     }
 }
