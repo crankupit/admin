@@ -10,6 +10,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Cache\Repository;
 use CrankUpIT\Admin\Console\InstallCommand;
 use Illuminate\Contracts\Auth\StatefulGuard;
+use CrankUpIT\Admin\Actions\AdminAttemptToAuth;
 use CrankUpIT\Admin\Contracts\AdminTFAProvider;
 use CrankUpIT\Admin\Actions\RedirectAdminIfTFAble;
 use CrankUpIT\Admin\Http\Responses\AdminLoginResponse;
@@ -18,6 +19,7 @@ use CrankUpIT\Admin\Http\Responses\AdminLockoutResponse;
 use CrankUpIT\Admin\Http\Controllers\AdminLoginController;
 use CrankUpIT\Admin\Http\Controllers\AdminTFALoginController;
 use CrankUpIT\Admin\Contracts\AdminLoginResponse as AdminLoginResponseContract;
+use CrankUpIT\Admin\ConfirmsAdminPasswords;
 use CrankUpIT\Admin\Contracts\AdminLockoutResponse as AdminLockoutResponseContract;
 
 
@@ -30,6 +32,14 @@ class AdminServicePorvider extends ServiceProvider
      */
     public function boot()
     {
+        Admin::loginView(function () {
+            return view('admin::login');
+        });
+
+        Admin::twoFactorChallengeView(function () {
+            return view('admin::two-factor-challenge');
+        });
+
         $this->configureRoutes();
 
         if ($this->app->runningInConsole()) {
@@ -39,7 +49,7 @@ class AdminServicePorvider extends ServiceProvider
         }
         // Files that go into the laravel app
 
-        // $this->loadViewsFrom(__DIR__ . '/../resources/views', 'admin');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'admin');
     }
 
     public function register()
@@ -62,6 +72,9 @@ class AdminServicePorvider extends ServiceProvider
             AdminTFALoginController::class,
             AdminTFALoginRequest::class,
             RedirectAdminIfTFAble::class,
+            AdminAttemptToAuth::class,
+            ConfirmsAdminPasswords::class,
+            ConfirmAdminPassword::class,
         ])->needs(StatefulGuard::class)
             ->give(function () {
                 return Auth::guard('admin');

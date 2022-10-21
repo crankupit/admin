@@ -26,3 +26,19 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 });
+
+Route::middleware([
+    'auth:admin', 'web',
+])->group(function () {
+    Route::get('/admin/dashboard', function () {
+        return view('admin.admin-dashboard');
+    })->name('admin.dashboard');
+});
+
+Route::middleware([
+    'auth:admin', 'web',
+])->group(function () {
+    Route::get('/admin/profile', function () {
+        return view('admin.profile.show');
+    })->name('admin.profile.show');
+});

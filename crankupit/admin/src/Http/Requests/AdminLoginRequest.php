@@ -2,6 +2,7 @@
 
 namespace CrankUpIT\Admin\Http\Requests;
 
+use CrankUpIT\Admin\Admin;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Hash;
 
@@ -25,7 +26,7 @@ class AdminLoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|exists:admins,email',
+            Admin::username() => 'required|email',
             'password' => 'required|string'
         ];
     }

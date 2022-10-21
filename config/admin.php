@@ -57,7 +57,7 @@ return [
     */
 
     'limiters' => [
-        'login' => '10,1',
+        'login' => '3,1',
         'two-factor' => 'two-factor',
         'verification' => 'verification',
     ],

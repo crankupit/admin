@@ -39,7 +39,7 @@ class AdminTFALoginController extends Controller
     public function index(AdminTFALoginRequest $request): AdminTFAChallengeViewResponse
     {
         if (!$request->hasChallengedUser()) {
-            throw new HttpResponseException(redirect()->route('get.admin.login'));
+            throw new HttpResponseException(redirect()->route('admin.login'));
         }
 
         return app(AdminTFAChallengeViewResponse::class);

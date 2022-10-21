@@ -14,7 +14,7 @@
         <div class="text-2xl mx-6 text-center">
             Admin Login Screen
         </div>
-        <form method="POST" action="{{ route('get.admin.login') }}">
+        <form method="POST" action="{{ route('post.admin.login') }}">
             @csrf
 
             <div>

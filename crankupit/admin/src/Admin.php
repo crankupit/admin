@@ -3,8 +3,8 @@
 namespace CrankUpIT\Admin;
 
 use CrankUpIT\Admin\Contracts\AdminLoginViewResponse;
-use CrankUpIT\Admin\Http\Responses\AdminViewResponse;
 use CrankUpIT\Admin\Contracts\AdminTFAChallengeViewResponse;
+use CrankUpIT\Admin\Http\Responses\AdminViewResponse;
 
 class Admin
 {
@@ -21,6 +21,13 @@ class Admin
      * @var callable|null
      */
     public static $authenticateUsingCallback;
+
+    /**
+     * The callback that is responsible for confirming user passwords.
+     *
+     * @var callable|null
+     */
+    public static $confirmPasswordsUsingCallback;
 
     /**
      * Indicates if Fortify routes will be registered.
@@ -77,6 +84,7 @@ class Admin
     public static function loginView($view)
     {
         app()->singleton(AdminLoginViewResponse::class, function () use ($view) {
+            // return new AdminViewResponse($view);
             return new AdminViewResponse($view);
         });
     }
@@ -112,5 +120,49 @@ class Admin
     public static function email()
     {
         return config('admin.email', 'email');
+    }
+
+    /**
+     * Register a callback that is responsible for building the authentication pipeline array.
+     *
+     * @param  callable  $callback
+     * @return void
+     */
+    public static function loginThrough(callable $callback)
+    {
+        static::authenticateThrough($callback);
+    }
+
+    /**
+     * Register a callback that is responsible for building the authentication pipeline array.
+     *
+     * @param  callable  $callback
+     * @return void
+     */
+    public static function authenticateThrough(callable $callback)
+    {
+        static::$authenticateThroughCallback = $callback;
+    }
+
+    /**
+     * Register a callback that is responsible for validating incoming authentication credentials.
+     *
+     * @param  callable  $callback
+     * @return void
+     */
+    public static function authenticateUsing(callable $callback)
+    {
+        static::$authenticateUsingCallback = $callback;
+    }
+
+    /**
+     * Register a callback that is responsible for confirming existing user passwords as valid.
+     *
+     * @param  callable  $callback
+     * @return void
+     */
+    public static function confirmPasswordsUsing(callable $callback)
+    {
+        static::$confirmPasswordsUsingCallback = $callback;
     }
 }

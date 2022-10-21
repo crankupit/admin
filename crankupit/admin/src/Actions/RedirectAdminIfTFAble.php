@@ -52,7 +52,7 @@ class RedirectAdminIfTFAble
 
         optional($user)->two_factor_secret &&
             !is_null(optional($user)->two_factor_confirmed_at) &&
-            in_array(TwoFactorAuthenticatable::class, class_uses_recursive($user));
+            in_array(TFAble::class, class_uses_recursive($user));
         return $this->twoFactorChallengeResponse($request, $user);
         // if (Fortify::confirmsTwoFactorAuthentication()) {
         //     if (
@@ -155,6 +155,6 @@ class RedirectAdminIfTFAble
 
         return $request->wantsJson()
             ? response()->json(['two_factor' => true])
-            : redirect()->route('two-factor.login');
+            : redirect()->route('admin.two-factor.login');
     }
 }

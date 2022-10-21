@@ -2,11 +2,9 @@
 
 namespace CrankUpIT\Admin\Actions;
 
-use Illuminate\Auth\Events\Lockout;
 use CrankUpIT\Admin\LoginRateLimiter;
-use CrankUpIT\Admin\Contracts\AdminLockoutResponse;
 
-class EnsureLoginIsNotThrottled
+class PrepareAdminAuthSession
 {
     /**
      * The login rate limiter instance.
@@ -35,12 +33,10 @@ class EnsureLoginIsNotThrottled
      */
     public function handle($request, $next)
     {
-        if (!$this->limiter->tooManyAttempts($request)) {
-            return $next($request);
-        }
+        $request->session()->regenerate();
 
-        event(new Lockout($request));
+        $this->limiter->clear($request);
 
-        return app(AdminLockoutResponse::class);
+        return $next($request);
     }
 }

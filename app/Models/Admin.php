@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use CrankUpIT\Admin\TFAble;
 use Laravel\Sanctum\HasApiTokens;
 use CrankUpIT\Admin\HasProfilePhoto;
 use Illuminate\Notifications\Notifiable;
@@ -16,7 +17,7 @@ class Admin extends Authenticatable
     use HasFactory;
     use HasProfilePhoto;
     use Notifiable;
-    use TwoFactorAuthenticatable;
+    use TFAble;
 
     /**
      * The attributes that are mass assignable.

@@ -3,9 +3,10 @@
 namespace CrankUpIT\Admin\Http\Responses;
 
 use CrankUpIT\Admin\Admin;
-use CrankUpIT\Admin\Contracts\AdminLoginResponse as AdminLoginResponseContract;
+use Illuminate\Http\JsonResponse;
+use CrankUpIT\Admin\Contracts\AdminLogoutResponse as AdminLogoutResponseContract;
 
-class AdminLoginResponse implements AdminLoginResponseContract
+class AdminLogoutResponse implements AdminLogoutResponseContract
 {
     /**
      * Create an HTTP response that represents the object.
@@ -16,7 +17,7 @@ class AdminLoginResponse implements AdminLoginResponseContract
     public function toResponse($request)
     {
         return $request->wantsJson()
-            ? response()->json(['two_factor' => false])
-            : redirect()->intended(Admin::redirects('admin.dashboard'));
+            ? new JsonResponse('', 204)
+            : redirect(Admin::redirects('logout', 'admin/login'));
     }
 }

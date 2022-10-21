@@ -6,10 +6,17 @@ use CrankUpIT\Admin\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Pipeline;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\Auth\StatefulGuard;
+use CrankUpIT\Admin\Actions\AdminAttemptToAuth;
+use CrankUpIT\Admin\Contracts\AdminLoginResponse;
+use CrankUpIT\Admin\Actions\RedirectAdminIfTFAble;
+use CrankUpIT\Admin\Actions\PrepareAdminAuthSession;
 use CrankUpIT\Admin\Http\Requests\AdminLoginRequest;
 use CrankUpIT\Admin\Contracts\AdminLoginViewResponse;
 use CrankUpIT\Admin\Actions\EnsureLoginIsNotThrottled;
+use CrankUpIT\Admin\Http\Responses\AdminLogoutResponse;
+use CrankUpIT\Admin\Contracts\AdminLogoutResponse as AdminLogoutResposeContract;
 
 class AdminLoginController extends Controller
 {
@@ -40,6 +47,7 @@ class AdminLoginController extends Controller
      */
     public function index(Request $request): AdminLoginViewResponse
     {
+        // dd($this->guard, $request);
         return app(AdminLoginViewResponse::class);
     }
 
@@ -72,12 +80,30 @@ class AdminLoginController extends Controller
 
         return (new Pipeline(app()))->send($request)->through(array_filter([
             config('admin.limiters.login') ? null : EnsureLoginIsNotThrottled::class,
-            RedirectIfTwoFactorAuthenticatable::class,
-            dd($this->guard, $request),
-            AttemptToAuthenticate::class,
-            dd($this->guard, $request),
-            PrepareAuthenticatedSession::class,
-            dd($this->guard, $request),
+            // dd($this->guard),
+            // RedirectAdminIfTFAble::class,
+            // dd($this->guard),
+            AdminAttemptToAuth::class,
+            // dd($this->guard),
+            PrepareAdminAuthSession::class,
+            // dd($this->guard),
         ]));
+    }
+
+    /**
+     * Destroy an authenticated session.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \CrankUpIT\Admin\Contracts\AdminLogoutResponse
+     */
+    public function logout(Request $request): AdminLogoutResposeContract
+    {
+        $this->guard->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return app(AdminLogoutResponse::class);
     }
 }

@@ -30,7 +30,7 @@ Route::group(
         if ($enableViews) {
             Route::get('/login', [AdminLoginController::class, 'index'])
                 ->middleware(['guest:' . config('admin.guard')])
-                ->name('get.admin.login');
+                ->name('admin.login');
         }
 
         $limiter = config('admin.limiters.login');
@@ -43,7 +43,7 @@ Route::group(
                 $limiter ? 'throttle:' . $limiter : null,
             ]))->name('post.admin.login');
 
-        Route::post('/logout', [AdminLoginController::class, 'destroy'])
+        Route::post('/logout', [AdminLoginController::class, 'logout'])
             ->name('admin.logout');
 
         // // Password Reset...
